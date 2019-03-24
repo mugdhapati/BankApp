@@ -11,18 +11,31 @@ namespace BankApp
     /// </summary>
     class Account
     {
+        #region statics
+        public static int lastaccountnumber = 0;
+        #endregion
+
         #region Properties
         /// <summary>
         /// unique number for the account
         /// </summary>
-        public int AccountNumber { get; set; }
+        public int AccountNumber { get; private set; }
         /// <summary>
         ///  email address of the account holder
         /// </summary>
         public string EmailAddress { get; set; }
-        public decimal Balance { get; set; }
+        public decimal Balance { get; private set; }
         public string AccountType { get; set; }
-        public DateTime CreatedDate { get; set; }
+        public DateTime CreatedDate { get; private set; }
+        #endregion
+        #region Constructor
+        public Account()
+        {
+            AccountNumber = ++lastaccountnumber;
+            CreatedDate = DateTime.Now;
+        }
+
+
         #endregion
 
         #region Methods
