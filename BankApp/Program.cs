@@ -6,53 +6,99 @@ namespace BankApp
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("*********************************");
-            Console.WriteLine("Welcome to my Bank");
-            Console.WriteLine("*********************************");
+            Console.WriteLine("*****************");
+            Console.WriteLine("Welcome to my bank!");
+            Console.WriteLine("*****************");
 
             while (true)
             {
                 Console.WriteLine("0. Exit");
-                Console.WriteLine("1. Create an Account");
+                Console.WriteLine("1. Create an account");
                 Console.WriteLine("2. Deposit");
                 Console.WriteLine("3. Withdraw");
-                Console.WriteLine("4. Print my Accounts");
-                Console.Write("Select an Option:");
+                Console.WriteLine("4. Print my accounts");
+                Console.Write("Select an option: ");
                 var option = Console.ReadLine();
                 switch (option)
                 {
                     case "0":
-                        Console.WriteLine("Thank you for visiting the Bank"); ///Writeline - Writes and goes to next line 
+                        Console.WriteLine("Thank you for visiting the bank!");
                         return;
                     case "1":
-                        Console.Write("Email Address:");   ///write - ONLY writes and doesn't go to the next line
-                        var emailAddress = Console.ReadLine();
-
-                        var accountTypes = Enum.GetNames(typeof(AccountType));
-                        for (int i = 0; i < accountTypes.Length; i++)
+                        try
                         {
-                            Console.WriteLine($"{i}. {accountTypes[i]}");
+                            Console.Write("Email Address: ");
+                            var emailAddress = Console.ReadLine();
+
+                            var accountTypes = Enum.GetNames(typeof(AccountType));
+                            for (int i = 0; i < accountTypes.Length; i++)
+                            {
+                                Console.WriteLine($"{i}. {accountTypes[i]}");
+                            }
+
+                            Console.Write("Account Type: ");
+                            var accountType = Enum.Parse<AccountType>(Console.ReadLine());
+
+                            Console.Write("Amount to deposit: ");
+                            var amount = Convert.ToDecimal(Console.ReadLine());
+
+                            var a1 = Bank.CreateAccount(emailAddress, accountType, amount);
+                            Console.WriteLine($"AN: {a1.AccountNumber}, CD: {a1.CreatedDate}, Balance: {a1.Balance:C}, EA: {a1.EmailAddress}, AT: {a1.AccountType}");
                         }
-                        Console.Write("Account Type: ");
-                        var accountType = Enum.Parse<AccountType>(Console.ReadLine());
-
-                        Console.Write("Amount to Deposit: ");
-                        var amount = Convert.ToDecimal(Console.ReadLine()); ///Convert ONLY allows us to convert into built in types like int, string
-
-                        var a1 = Bank.CreateAccount(emailAddress, accountType, amount);
-
-                        Console.WriteLine($"AN {a1.AccountNumber}, CD: {a1.CreatedDate}, B: {a1.Balance:C}, EA: {a1.EmailAddress}, AT: {a1.AccountType}");
-      
-                        
+                        catch (ArgumentNullException nx)
+                        {
+                            Console.WriteLine($"Email Address Error - {nx.Message} - Please try again! ");
+                        }
+                        catch (ArgumentException ax)
+                        {
+                            Console.WriteLine($"Account Type Error - {ax.Message} - Please try again! ");
+                        }
+                        catch (FormatException)
+                        {
+                            Console.WriteLine("Amount Error - Please provide a valid amount. Try again! ");
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($" Sorry something went wrong - {ex.Message} - Please Try again");                        
+                        }
                         break;
                     case "2":
+                        PrintAllAccounts();
+                        Console.Write("Account Number: ");
+                        var accountNumber = Convert.ToInt32(Console.ReadLine());
+                        Console.Write("Amount to deposit: ");
+                        var depositAmount = Convert.ToDecimal(Console.ReadLine());
+                        Bank.Deposit(accountNumber, depositAmount);
+                        Console.WriteLine("Desposit successfully completed!");
+                        break;
                     case "3":
+                        PrintAllAccounts();
+                        Console.Write("Account Number: ");
+                        accountNumber = Convert.ToInt32(Console.ReadLine());
+                        Console.Write("Amount to withdraw: ");
+                        var withdrawAmount = Convert.ToDecimal(Console.ReadLine());
+                        Bank.Withdraw(accountNumber, withdrawAmount);
+                        Console.WriteLine("Withdrawal successfully completed!");
+                        break;
                     case "4":
-                    default:///if a case is not in our list
+                        PrintAllAccounts();
+                        break;
+                    default:
                         break;
                 }
             }
+
         }
 
+
+        private static void PrintAllAccounts()
+        {
+            var accounts = Bank.GetAllAccountsForUser();
+            foreach (var account in accounts)
+            {
+                Console.WriteLine($"AN: {account.AccountNumber}, CD: {account.CreatedDate}, Balance: {account.Balance:C}, EA: {account.EmailAddress}, AT: {account.AccountType}");
+            }
+
+        }
     }
 }
