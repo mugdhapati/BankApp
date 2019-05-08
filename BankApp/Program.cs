@@ -17,6 +17,7 @@ namespace BankApp
                 Console.WriteLine("2. Deposit");
                 Console.WriteLine("3. Withdraw");
                 Console.WriteLine("4. Print my accounts");
+                Console.WriteLine("5. Print my Transactions");
                 Console.Write("Select an option: ");
                 var option = Console.ReadLine();
                 switch (option)
@@ -83,6 +84,9 @@ namespace BankApp
                     case "4":
                         PrintAllAccounts();
                         break;
+                    case "5":
+                        PrintAllTransactions();
+                        break;
                     default:
                         break;
                 }
@@ -90,10 +94,23 @@ namespace BankApp
 
         }
 
+        private static void PrintAllTransactions()
+        {
+            PrintAllAccounts();
+            Console.Write("Account Number:");
+            var accountnumber = Convert.ToInt32(Console.ReadLine());
+            var transactions = Bank.GetTransactionsForAccountNumber(accountnumber);
+            foreach (var transaction in transactions)
+            {
+                Console.WriteLine($"Id: {transaction.TransactionId}, Date: {transaction.TransactionDate}, Type: {transaction.TransactionType}, Amount: {transaction.Amount}");
+            }
+        }
 
         private static void PrintAllAccounts()
         {
-            var accounts = Bank.GetAllAccountsForUser();
+            Console.Write("EmailAddress: ");
+            var emailaddress = Console.ReadLine();
+            var accounts = Bank.GetAllAccountsForUser(emailaddress);
             foreach (var account in accounts)
             {
                 Console.WriteLine($"AN: {account.AccountNumber}, CD: {account.CreatedDate}, Balance: {account.Balance:C}, EA: {account.EmailAddress}, AT: {account.AccountType}");
